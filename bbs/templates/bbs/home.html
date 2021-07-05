@@ -1,0 +1,76 @@
+<h1>{{ title }}</h1>
+
+<!-- bbs_homeはurls.pyで記述 　bbs_homeを解決すると/bbs/というパスになります。-->
+<!-- bbs_homeはurl.pyに記載アリ-->
+<form method="POST" action="{% url 'bbs_home' %}">
+    {% csrf_token %}
+    <!-- as_pというのはformのメソッドまたは属性　as_pというのはフォームの部品をpタグで囲って出力するというメソッド -->
+    {{ form.as_p }}
+    <button type="submit" name="submit">投稿する</button>
+</form>
+
+<!-- 削除-->
+<form method="POST" action="{% url 'bbs_home' %}" >
+    {% csrf_token %}
+    <!-- as_pというのはformのメソッドまたは属性　as_pというのはフォームの部品をpタグで囲って出力するというメソッド -->
+    <button type="submit" name="delete_all" >全削除</button>
+</form>
+
+<!-- 取得したデータを表示する場所-->
+<div id="news"></div>
+
+<!-- jqueryダウンロード-->
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<script>
+
+//$(function(){})は全てを読み込みを終わるまで保留する
+//setIntervalで周期的にajaxの機能が稼働するようにしている 今回は500ms
+//$.get("アクセスするURL",function(URLから返ってきたリスポンス))
+$(function(){
+    setInterval(function(){
+        $.get('http://127.0.0.1:8000/bbs/ajax',function(json){
+            // alert(json);
+            //jsonから形式を変換
+            const json2 = JSON.parse(json);
+            // alert(json2)
+            // alert(json2[0].fields.content);//test1
+            // alert(json2.length);//OK
+
+            //変数htmlにhtmlのデータを入れていく
+            var html='<ul>';
+            for (var i=0;i<json2.length;i++){
+                // alert(i);
+                html +='<li>'+json2[i].fields.content+"</li>";
+                // html +='<li>'+json.items[i].content+"</li>";
+            }
+            html+="</ul>";
+
+            //newsの領域にhtmlを適用する
+            $('#news').html(html);
+        })
+
+
+    },500);
+});
+
+    // $.getJSON('http://127.0.0.1:8000/bbs/ajax',function(json){
+    //     var html='<ul>'
+    //     for (var i=0;i<json.items.length;i++){
+    //         html +='<li>'+json.items[i].title+"</li>";
+    //     }
+    //     html+="</ul>";
+
+    //     $('#news').html(html);
+    // })
+//     $.ajax({
+//   url: 'http://127.0.0.1:8000/bbs/ajax',
+//   dataType: 'json',
+//   sucess: function (result) {
+
+//     console.log(result.ports);
+//   }
+// });
+// $('#button').on('click', function() {
+//   alert("クリックされました");
+
+</script>
